@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man em HTML</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+        }
+        #gameCanvas {
+            display: block;
+            margin: auto;
+            background: #000;
+            border: 1px solid #fff;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .button {
+            background: #555;
+            border: none;
+            color: white;
+            padding: 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .button:active {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <button class="button" id="up">↑</button>
+        <div>
+            <button class="button" id="left">←</button>
+            <button class="button" id="right">→</button>
+        </div>
+        <button class="button" id="down">↓</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const pacMan = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 20,
+            color: 'yellow',
+            dx: 0,
+            dy: 0
+        };
+
+        const controls = {
+            up: document.getElementById('up'),
+            down: document.getElementById('down'),
+            left: document.getElementById('left'),
+            right: document.getElementById('right')
+        };
+
+        function drawPacMan() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(pacMan.x, pacMan.y, pacMan.radius, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacMan.x, pacMan.y);
+            ctx.closePath();
+            ctx.fillStyle = pacMan.color;
+            ctx.fill();
+        }
+
+        function update() {
+            pacMan.x += pacMan.dx;
+            pacMan.y += pacMan.dy;
+            if (pacMan.x < pacMan.radius) pacMan.x = pacMan.radius;
+            if (pacMan.x > canvas.width - pacMan.radius) pacMan.x = canvas.width - pacMan.radius;
+            if (pacMan.y < pacMan.radius) pacMan.y = pacMan.radius;
+            if (pacMan.y > canvas.height - pacMan.radius) pacMan.y = canvas.height - pacMan.radius;
+            drawPacMan();
+            requestAnimationFrame(update);
+        }
+
+        controls.up.addEventListener('touchstart', () => pacMan.dy = -2);
+        controls.up.addEventListener('touchend', () => pacMan.dy = 0);
+        controls.down.addEventListener('touchstart', () => pacMan.dy = 2);
+        controls.down.addEventListener('touchend', () => pacMan.dy = 0);
+        controls.left.addEventListener('touchstart', () => pacMan.dx = -2);
+        controls.left.addEventListener('touchend', () => pacMan.dx = 0);
+        controls.right.addEventListener('touchstart', () => pacMan.dx = 2);
+        controls.right.addEventListener('touchend', () => pacMan.dx = 0);
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp': pacMan.dy = -2; break;
+                case 'ArrowDown': pacMan.dy = 2; break;
+                case 'ArrowLeft': pacMan.dx = -2; break;
+                case 'ArrowRight': pacMan.dx = 2; break;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'ArrowDown': pacMan.dy = 0; break;
+                case 'ArrowLeft':
+                case 'ArrowRight': pacMan.dx = 0; break;
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>
